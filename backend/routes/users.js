@@ -4,22 +4,25 @@ const mysql = require('../mysql').pool;
 
 
 router.get('/', (req, res, next) => {
-  res.status(200).json({
-    message: 'Utilizando o get do users'
+  mysql.getConnection((error, conn) => {
+    if (error) {
+      return res.status(500).send({
+        error: error
+      });
+    }
+    conn.query(`SELECT * FROM users`, (error, result, fields) => {
+      if (error) {
+        return res.status(500).send({
+          error: error
+        });
+      }
+      return res.status(200).send({ response: result });
+    }
+    );
   });
 });
 
 router.post('/', (req, res, next) => {
-  const user = {
-    name: req.body.name,
-    cpf: req.body.cpf,
-    birthdate: req.body.birthdate,
-    phone: req.body.phone,
-    city: req.body.city,
-    state: req.body.state,
-    email: req.body.email,
-    password: req.body.password
-  };
   mysql.getConnection((error, conn) => {
     if (error) {
       return res.status(500).send({
@@ -27,7 +30,7 @@ router.post('/', (req, res, next) => {
       });
     }
     conn.query('INSERT INTO users (name, cpf, birthdate, phone, city, state, email, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [user.name, user.cpf, user.birthdate, user.phone, user.city, user.state, user.email, user.password],
+      [req.body.name, req.body.cpf, req.body.birthdate, req.body.phone, req.body.city, req.body.state, req.body.email, req.body.password],
       (error, result, field) => {
         conn.release();
         if (error) {
@@ -37,7 +40,6 @@ router.post('/', (req, res, next) => {
         }
         res.status(201).send({
           message: 'Usuário criado com sucesso!',
-          user: user.name,
           id: result.insertId
         });
       });
@@ -45,28 +47,71 @@ router.post('/', (req, res, next) => {
 });
 
 router.get('/:userId', (req, res, next) => {
-  const id = req.params.userId;
-  res.status(200).json({
-    message: 'Utilizando o get do users',
-    id: id
+  mysql.getConnection((error, conn) => {
+    if (error) {
+      return res.status(500).send({
+        error: error
+      });
+    }
+    conn.query(`SELECT * FROM users WHERE id = ?`, [req.params.userId], (error, result, fields) => {
+      conn.release();
+      if (error) {
+        return res.status(500).send({
+          error: error
+        });
+      }
+      res.status(200).send({ response: result });
+    }
+    );
   });
 });
 
 router.patch('/', (req, res, next) => {
-  const id = req.params.userId;
-  res.status(200).json({
-    message: 'Utilizando o patch do users',
-    id: id
+  mysql.getConnection((error, conn) => {
+    if (error) {
+      return res.status(500).send({
+        error: error
+      });
+    }
+    conn.query(`UPDATE users SET name = ?, birthdate = ?, phone = ?, city = ?, state = ?,  password = ? WHERE id = ?`,
+      [req.body.name, req.body.birthdate, req.body.phone, req.body.city, req.body.state, req.body.password, req.body.id],
+      (error, result, field) => {
+        conn.release();
+        if (error) {
+          return res.status(500).send({
+            error: error
+          });
+        }
+        res.status(200).send({
+          message: 'Usuário atualizado com sucesso!'
+        });
+      }
+    );
   });
 });
 
 router.delete('/', (req, res, next) => {
-  const id = req.params.userId;
-  res.status(200).json({
-    message: 'Utilizando o delete do users',
-    id: id
+  mysql.getConnection((error, conn) => {
+    if (error) {
+      return res.status(500).send({
+        error: error
+      });
+    }
+    conn.query(`DELETE FROM users WHERE id = ?`, [req.body.id], (error, result, field) => {
+      conn.release();
+      if (error) {
+        return res.status(500).send({
+          error: error
+        });
+      }
+      res.status(202).send({
+        message: 'Usuário deletado com sucesso!'
+      });
+    }
+    );
   });
-});
+}
+);
 
 
 
