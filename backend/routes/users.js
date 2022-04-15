@@ -13,4 +13,30 @@ router.post('/', (req, res, next) => {
   });
 });
 
+router.get('/:userId', (req, res, next) => {
+  const id = req.params.userId;
+  res.status(200).json({
+    message: 'Utilizando o get do users',
+    id: id
+  });
+});
+
+router.patch('/', (req, res, next) => {
+  const id = req.params.userId;
+  res.status(200).json({
+    message: 'Utilizando o patch do users',
+    id: id
+  });
+});
+
+router.delete('/', (req, res, next) => {
+  const id = req.params.userId;
+  res.status(200).json({
+    message: 'Utilizando o delete do users',
+    id: id
+  });
+});
+
+
+
 module.exports = router;
