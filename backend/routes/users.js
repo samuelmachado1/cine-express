@@ -8,6 +8,20 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
+  const user = {
+    name: req.body.name,
+    bithdate: req.body.bithdate,
+    phone: req.body.phone,
+    city: req.body.city,
+    state: req.body.state,
+    email: req.body.email,
+    password: req.body.password
+  };
+  res.status(201).json({
+    message: 'Usurio criado com sucesso!',
+    createdUser: user
+  });
+
   res.status(200).json({
     message: 'Utilizando o post do users'
   });
