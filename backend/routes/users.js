@@ -1,5 +1,7 @@
 const express = require('express');
 const router = express.Router();
+const mysql = require('../mysql').pool;
+
 
 router.get('/', (req, res, next) => {
   res.status(200).json({
@@ -10,20 +12,35 @@ router.get('/', (req, res, next) => {
 router.post('/', (req, res, next) => {
   const user = {
     name: req.body.name,
-    bithdate: req.body.bithdate,
+    cpf: req.body.cpf,
+    birthdate: req.body.birthdate,
     phone: req.body.phone,
     city: req.body.city,
     state: req.body.state,
     email: req.body.email,
     password: req.body.password
   };
-  res.status(201).json({
-    message: 'Usurio criado com sucesso!',
-    createdUser: user
-  });
-
-  res.status(200).json({
-    message: 'Utilizando o post do users'
+  mysql.getConnection((error, conn) => {
+    if (error) {
+      return res.status(500).send({
+        error: error
+      });
+    }
+    conn.query('INSERT INTO users (name, cpf, birthdate, phone, city, state, email, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [user.name, user.cpf, user.birthdate, user.phone, user.city, user.state, user.email, user.password],
+      (error, result, field) => {
+        conn.release();
+        if (error) {
+          return res.status(500).send({
+            error: error
+          });
+        }
+        res.status(201).send({
+          message: 'Usuário criado com sucesso!',
+          user: user.name,
+          id: result.insertId
+        });
+      });
   });
 });
 
