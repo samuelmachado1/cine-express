@@ -4,6 +4,8 @@
     "MYSQL_PASSWORD": "adminadmin",
     "MYSQL_DATABASE": "cine-express",
     "MYSQL_HOST": "localhost",
-    "MYSQL_PORT": 3306
+    "MYSQL_PORT": 3306,
+
+    "JWT_KEY": "secret"
   }
 }
