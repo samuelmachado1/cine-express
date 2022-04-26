@@ -3,9 +3,10 @@ const router = express.Router();
 const mysql = require('../mysql').pool;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const token = require('../middleware/login');
 
 
-router.get('/', (req, res, next) => {
+router.get('/', token, (req, res, next) => {
   mysql.getConnection((error, conn) => {
     if (error) {
       return res.status(500).send({
@@ -144,11 +145,7 @@ router.post('/login', (req, res, next) => {
   });
 });
 
-
-
-
-
-router.get('/:userId', (req, res, next) => {
+router.get('/:userId', token, (req, res, next) => {
   mysql.getConnection((error, conn) => {
     if (error) {
       return res.status(500).send({
@@ -185,7 +182,7 @@ router.get('/:userId', (req, res, next) => {
   });
 });
 
-router.patch('/', (req, res, next) => {
+router.patch('/update', token, (req, res, next) => {
   mysql.getConnection((error, conn) => {
     if (error) {
       return res.status(500).send({
@@ -219,7 +216,7 @@ router.patch('/', (req, res, next) => {
   });
 });
 
-router.delete('/', (req, res, next) => {
+router.delete('/', token, (req, res, next) => {
   mysql.getConnection((error, conn) => {
     if (error) {
       return res.status(500).send({
