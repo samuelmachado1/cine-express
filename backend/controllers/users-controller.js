@@ -1,4 +1,6 @@
 const mysql = require('../mysql').pool;
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 exports.getUsers = (req, res, next) => {
@@ -130,6 +132,8 @@ exports.postLogin = (req, res, next) => {
           );
           return res.status(200).send({
             message: 'Authentication successful!',
+            id: results[0].id,
+            email: results[0].email,
             token: token
           });
         }
