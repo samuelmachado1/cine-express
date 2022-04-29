@@ -15,7 +15,11 @@ import { AuthProvider, AuthContext } from './context/auth';
 const AppRoutes = () => {
 
   const PrivateRoutes = ({ children }) => {
-    const { authenticated } = useContext(AuthContext);
+    const { authenticated, isLoading } = useContext(AuthContext);
+
+    if (isLoading) {
+      return <div>Loading...</div>;
+    }
 
     if (!authenticated) {
       return (
