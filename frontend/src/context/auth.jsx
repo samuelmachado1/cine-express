@@ -13,7 +13,9 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const recoveredUser = localStorage.getItem('user');
-    if (recoveredUser) {
+    const token = localStorage.getItem('token');
+
+    if (recoveredUser && token) {
       setUser(JSON.parse(recoveredUser));
     }
     setIsLoading(false);
@@ -21,8 +23,6 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     const response = await createSession(email, password);
-
-    console.log('done', response);
     const token = response.token;
     const loggedUser = response.id;
 
