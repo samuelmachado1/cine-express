@@ -2,6 +2,8 @@ import React, { useState, createContext, useEffect } from 'react';
 
 import { useNavigate } from 'react-router';
 
+import { api, createSession } from '../../src/services/api';
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -17,26 +19,29 @@ export const AuthProvider = ({ children }) => {
     setIsLoading(false);
   }, []);
 
-  const login = (email, password) => {
+  const login = async (email, password) => {
+    const response = await createSession(email, password);
 
-    const loggedUser = {
-      email,
-      id: 1,
-    };
+    console.log('done', response);
+    const token = response.token;
+    const loggedUser = response.id;
+
 
     localStorage.setItem('user', JSON.stringify(loggedUser));
+    localStorage.setItem('token', token);
 
-    if (password === '123') {
+    api.defaults.headers.Authorization = `Bearer ${token}`;
 
-      setUser(loggedUser);
-      navigate('/');
-    }
-    // setUser({ email, password });
+    setUser(loggedUser);
+    navigate('/');
   };
 
   const logout = () => {
-    console.log('logout');
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
+
+    api.defaults.headers.Authorization = null;
+
     setUser(null);
     navigate('/login');
   };
